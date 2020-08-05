@@ -1,11 +1,12 @@
 from room import Room
 from player import Player
+import textwrap
 
 # Declare all the rooms
 
 room = {
     'outside':  Room("Outside Cave Entrance",
- "North of you, the cave mount beckons"),
+ "North of you, the cave mount beckons", ['big rocks']),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
@@ -19,7 +20,7 @@ to north. The smell of gold permeates the air."""),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+earlier adventurers. The only exit is to the south.""", ),
 }
 
 
@@ -36,11 +37,17 @@ room['treasure'].s_to = room['narrow']
 
 # add items to rooms here 
 
+room['outside'].items = ['rocks']
+
 # Make a new player object that is currently in the 'outside' room.
 
 player1 = Player(room['outside'])
 
+intro = '\n\nWelcome to the Mind Game. \n\nYou can move through the map by selecting one of the cardinal directions: n - s - e - w. Your mission is to find the treasure and return from the cave without being scorched to smitherines by the FIRE BREATHING DRAGON. To begin, you have only an apple, a sword, and your lucky socks. \n\nFair well and farewell. \n'
+formatted_intro = textwrap.indent(text=intro, prefix='  ')
+print(formatted_intro)
 # Write a loop that:
+
 
 while True:
     # * Prints the current room name 
@@ -50,7 +57,10 @@ while True:
     # Print an error message if the movement isn't allowed.
     # If the user enters "q", quit the game
 
-    print(player1.location)
+
+
+
+    print(f'\n{player1.location}\n')
 
     command = input("> ").split(',')
 
@@ -62,27 +72,27 @@ while True:
         # if there is, set that north room as the player's location 
         if hasattr(player1.location, 'n_to'): 
             player1 = Player(player1.location.n_to)
-            print(f'Northward and onward!')
+            print(f'\nNorthward and onward!\n')
         else:
             print(f'You cannot go where there is nothing')
     elif command[0] == 's':
         if hasattr(player1.location, 's_to'): 
             player1 = Player(player1.location.s_to)
-            print(f'Southward and onward!')
+            print(f'\nSouthward and onward!\n')
         else:
             print(f'You cannot go where there is nothing')
     elif command[0] == 'e': 
         if hasattr(player1.location, 'e_to'):  
             player1 = Player(player1.location.e_to)
-            print(f'Eastward and onward!')
+            print(f'\nEastward and onward!\n')
         else:
             print(f'You cannot go where there is nothing')
     elif command[0] == 'w':
         if hasattr(player1.location, 'w_to'): 
             player1 = Player(player1.location.w_to)
-            print(f'Westward and onward!')
+            print(f'\nWestward and onward!\n')
         else:
-            print(f'You cannot go where there is nothing')
+            print(f'\nYou cannot go where there is nothing\n')
 
     ## put item logic here or in each elif? ideally here 
     ### check if new location has items (if items property length > 0) and if it does, list the items
