@@ -1,28 +1,30 @@
 from room import Room
 from player import Player
+from item import Item
 import textwrap
+
+# if I circle back to this - update to have all commands accessible from any point - dont loop through items every room where there is items - make riddle to get past dragon - 
 
 # Declare all the rooms
 
 room = {
     'outside':  Room("Outside Cave Entrance",
- "North of you, the cave mount beckons", ['big rocks']),
+ "North of you, the cave mount beckons"),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+passages run north and east.""", [Item('gold', 'shiny'), Item('rocks', 'dusty')]),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
+the distance, but there is no way across the chasm.""", [Item('gold', 'shiny'), Item('rocks', 'dusty')]),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
+to north. The smell of gold permeates the air.""", [Item('rocks', 'dusty'), Item('rocks', 'dusty')]),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south.""", ),
+earlier adventurers. The only exit is to the south.""", [Item('treasure', 'shiny'), Item('rocks', 'dusty')]),
 }
-
 
 # Link rooms together
 
@@ -35,41 +37,49 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
-# add items to rooms here 
-
-room['outside'].items = ['rocks']
-
-# Make a new player object that is currently in the 'outside' room.
 
 player1 = Player(room['outside'])
 
 intro = '\n\nWelcome to the Mind Game. \n\nYou can move through the map by selecting one of the cardinal directions: n - s - e - w. Your mission is to find the treasure and return from the cave without being scorched to smitherines by the FIRE BREATHING DRAGON. To begin, you have only an apple, a sword, and your lucky socks. \n\nFair well and farewell. \n'
+
 formatted_intro = textwrap.indent(text=intro, prefix='  ')
+
 print(formatted_intro)
-# Write a loop that:
 
 
 while True:
-    # * Prints the current room name 
-    # * Prints the current description (the textwrap module might be useful here).
-    # * Waits for user input and decides what to do.
-    # If the user enters a cardinal direction, attempt to move to the room there.
-    # Print an error message if the movement isn't allowed.
-    # If the user enters "q", quit the game
 
+    print(f'\n Current location: {player1.location.name}\n {player1.location.description}')
 
+    if player1.location.name == "Treasure Chamber":
+        print("OH MY GOD A FIRE BREATHING DRAGON")
+    
+    if len(player1.location.items) > 0:
 
+        itemCheck = True 
+        while itemCheck == True: 
+            print(f'{player1.location.print_items()}')
+            print(f'{player1.print_items()}')
 
-    print(f'\n{player1.location}\n')
+            command = input("\n What do you do? \n Options: \n get (item) \n drop (item) \n move on \n >>> ").split(' ')
 
-    command = input("> ").split(',')
+            if command[0] == 'get':
+                player1.get(command[1])
+                player1.location.remove(command[1])
+            elif command[0] == 'drop':
+                player1.location.add(command[1], player1.items)
+                player1.drop(command[1])
+            else:
+                itemCheck = False
+
+  
+    command = input("Where would you like to go?").split(',')
 
     if command[0] == 'q':
         print(f'May the odds be ever in your favor')
         break 
     elif command[0] == 'n':
-        # check if player can move to north 
-        # if there is, set that north room as the player's location 
+        # add conditional with firebreathing dragon if location is narrow passage... build out riddle logic 
         if hasattr(player1.location, 'n_to'): 
             player1 = Player(player1.location.n_to)
             print(f'\nNorthward and onward!\n')
@@ -94,6 +104,10 @@ while True:
         else:
             print(f'\nYou cannot go where there is nothing\n')
 
-    ## put item logic here or in each elif? ideally here 
-    ### check if new location has items (if items property length > 0) and if it does, list the items
-    ### give user option to pick up items 
+ 
+### give user option to pick up items - method in class constructor? or can I just player1.items.append ? 
+### give user option to drop items  - method in class constructor? 
+  
+
+### if need be get something that works and is functional first - then go back and refactor to specifications - for input use .split(' ') on input
+ ### if time - add riddle to get past dragon at treasure room 
